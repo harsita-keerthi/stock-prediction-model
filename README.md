@@ -15,3 +15,7 @@ This web app predicts stock trends using historical stock price data and a machi
 - **TensorFlow**: For loading and using the machine learning model.
 - **Matplotlib**: For creating visualizations.
 - **yfinance**: For fetching historical stock data.
+
+## Demo
+  
+![ezgif-6-1af16d1b95](https://github.com/user-attachments/assets/0fcbce89-cae4-4b35-ab07-e3eb33690768)
