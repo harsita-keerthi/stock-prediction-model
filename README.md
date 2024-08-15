@@ -1,6 +1,7 @@
-# Stock Trend Predictions
+# Stock Price Prediction with LSTM and Moving Averages
+View project: https://stock-prediction-model.streamlit.app/
 
-This web app predicts stock trends using historical stock price data and a machine learning model. It is built with Streamlit for the frontend, TensorFlow for the machine learning model, and Yahoo Finance (via `yfinance`) for stock data.
+This web app predicts stock trends using historical stock price data and a machine learning model. It is built with Streamlit for the frontend, TensorFlow for the machine learning model, and Yahoo Finance (via yfinance) for stock data.
 
 ## Features
 
