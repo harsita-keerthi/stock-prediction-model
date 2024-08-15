@@ -1,1 +1,17 @@
-# stock-prediction-model
+# Stock Trend Predictions
+
+This web app predicts stock trends using historical stock price data and a machine learning model. It is built with Streamlit for the frontend, TensorFlow for the machine learning model, and Yahoo Finance (via `yfinance`) for stock data.
+
+## Features
+
+- **Data Visualization**: Displays historical stock prices and moving averages.
+- **Stock Trend Prediction**: Predicts future stock trends based on historical data.
+- **Interactive UI**: Allows users to input stock tickers and view predictions and visualizations.
+
+## Technologies
+
+- **Python**: 3.12
+- **Streamlit**: For building the interactive web application.
+- **TensorFlow**: For loading and using the machine learning model.
+- **Matplotlib**: For creating visualizations.
+- **yfinance**: For fetching historical stock data.
