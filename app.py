@@ -1,3 +1,4 @@
+
 # import libraries
 import numpy as np
 import pandas as pd
@@ -6,6 +7,7 @@ import yfinance as yf
 import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 import streamlit as st
+import plotly.graph_objs as go
 
 import tensorflow as tf
 print(tf.__version__)
@@ -16,34 +18,42 @@ end = '2019-12-31'
 
 st.title('Stock Trend Prediction')
 
-user_input = st.text_input('Enter Stock Ticker', 'AAPL')
+st.sidebar.subheader('Customize Your View')
+user_input = st.sidebar.text_input('Enter Stock Ticker', 'AAPL')
+start_date = st.sidebar.date_input('Start Date', pd.to_datetime(start))
+end_date = st.sidebar.date_input('End Date', pd.to_datetime(end))
+ma_period_100 = st.sidebar.slider('100 Days Moving Average Period', min_value=50, max_value=200, value=100)
+ma_period_200 = st.sidebar.slider('200 Days Moving Average Period', min_value=100, max_value=400, value=200)
+
 df =  yf.download(user_input, start=start, end=end)
 
 # describe data
-st.subheader('Data from 2010 - 2019')
+st.subheader('{} Data from {} to {}'.format(user_input, start_date, end_date))
 st.write(df.describe())
 
 # visualizations
 st.subheader('Closing Price vs. Time')
-fig = plt.figure(figsize = (12,6))
-plt.plot(df.Close)
-st.pyplot(fig)
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df.index, y=df['Close'], mode='lines', name='Closing Price'))
+fig.update_layout(xaxis_title='Date', width=1200, height=700, yaxis_title='Price')
+st.plotly_chart(fig, use_container_width=True)
 
-st.subheader('Closing Price vs. Time with 100 Days Moving Average')
-ma100 = df.Close.rolling(100).mean()
-fig = plt.figure(figsize = (12,6))
-plt.plot(df.Close, label='Closing Price')
-plt.plot(ma100, label='100 Days Moving Average', color='red')
-st.pyplot(fig)
+st.subheader('Closing Price and Moving Averages')
+ma100 = df['Close'].rolling(ma_period_100).mean()
+ma200 = df['Close'].rolling(ma_period_200).mean()
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=df.index, y=df['Close'], mode='lines', name='Closing Price'))
+fig.add_trace(go.Scatter(x=df.index, y=ma100, mode='lines', name='{} Days Moving Average'.format(ma_period_100), line=dict(color='red')))
+fig.add_trace(go.Scatter(x=df.index, y=ma200, mode='lines', name='{} Days Moving Average'.format(ma_period_200), line=dict(color='green')))
+fig.update_layout(xaxis_title='Date', width=1200, height=700, yaxis_title='Price', 
+    legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=0.01
+    ))
+st.plotly_chart(fig, use_container_width=True)
 
-st.subheader('Closing Price vs. Time with 100 Days and 200 Days Moving Average')
-ma100 = df.Close.rolling(100).mean()
-ma200 = df.Close.rolling(200).mean()
-fig = plt.figure(figsize = (12,6))
-plt.plot(df.Close, label='Closing Price')
-plt.plot(ma100, label='100 Days Moving Average', color='red')
-plt.plot(ma200, label='200 Days Moving Average', color='green')
-st.pyplot(fig)
 
 # split data into training and test (70% in training, 30% in testing)
 
@@ -83,13 +93,31 @@ y_test = y_test * scale_factor
 
 # final prediction graph
 st.subheader('Predictions vs. Original')
-fig2 = plt.figure(figsize=(12,6))
-plt.plot(y_test, 'g', label = 'Original Price')
-plt.plot(y_predicted, 'r', label = 'Predicted Price')
-plt.xlabel('Time')
-plt.ylabel('Price')
-plt.legend()
-st.pyplot(fig2)
+y_predicted = y_predicted.flatten() if y_predicted.ndim > 1 else y_predicted
+
+fig = go.Figure()
+
+fig.add_trace(go.Scatter(y=y_test, mode='lines', name='Original Price', line=dict(color='green')))
+fig.add_trace(go.Scatter(y=y_predicted, mode='lines', name='Predicted Price', line=dict(color='red')))
+
+fig.update_layout(
+    xaxis_title='Time',
+    yaxis_title='Price',
+    legend_title='Legend',
+    width=1200,
+    height=700,
+    legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=0.01
+    ),
+    yaxis=dict(
+        range=[min(min(y_test), min(y_predicted)), max(max(y_test), max(y_predicted))]
+    )
+)
+
+st.plotly_chart(fig, use_container_width=True)
 
 explanation = (
     f"**Stock Ticker:** {user_input}\n\n"
@@ -99,5 +127,3 @@ explanation = (
     "The accuracy of predictions may vary based on market conditions and historical data used."
 )
 st.markdown(explanation)
-
-
