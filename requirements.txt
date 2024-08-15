@@ -1,6 +1,6 @@
-numpy
+numpy==1.26.4
 pandas
-matplotlib
+matplotlib==3.9.2
 yfinance
 tensorflow==2.17.0
-streamlit
+streamlit==1.37.1
