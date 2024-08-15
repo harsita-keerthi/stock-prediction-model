@@ -4,3 +4,5 @@ matplotlib==3.9.2
 yfinance
 tensorflow==2.17.0
 streamlit==1.37.1
+scikit-learn==1.3.0  
+
